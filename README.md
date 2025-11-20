@@ -147,10 +147,4 @@ Max upload size: **16 MB**
 
 ---
 
-If you want, I can also generate:
 
-* A professional **project logo**
-* A **contribution guide**
-* A **Dockerfile** for deployment
-* A **requirements freeze** with pinned versions
-* A **full API documentation page**
