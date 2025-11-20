@@ -108,10 +108,3 @@ UPLOAD_FOLDER=uploads
 * Add rate limiting for analysis endpoints
 * Prefer HTTPS + secure session cookies
 
-## To do
-
-* Implement password reset with secure email token
-* Add progress indicators for long operations (OCR, PDF generation)
-* Improve sentiment analysis using an ML model instead of keyword matching
-* Save article embeddings to the database to speed up comparisons
-* Add Docker Compose (Flask + MongoDB) for easy deployment
