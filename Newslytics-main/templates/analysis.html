@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Analysis - Newslytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #F0E6FA;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .navbar {
+            background-color: #FFFFFF;
+            padding: 20px 40px;
+            box-shadow: 0 2px 15px rgba(75, 0, 130, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar h1 {
+            color: #4B0082;
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background-color: #9370DB;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn {
+            padding: 10px 24px;
+            background-color: #F5F0FA;
+            color: #9370DB;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background-color: #E6E6FA;
+            color: #4B0082;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* Loading State */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        .spinner-large {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #E6E6FA;
+            border-top-color: #9370DB;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            color: #6A5ACD;
+            font-size: 16px;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: #FFFFFF;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(75, 0, 130, 0.08);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card h2 {
+            color: #4B0082;
+            font-size: 22px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .card h3 {
+            color: #4B0082;
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        /* Article Header */
+        .article-header {
+            margin-bottom: 20px;
+        }
+
+        .article-title {
+            color: #4B0082;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 15px;
+        }
+
+        .article-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            color: #9370DB;
+            font-size: 14px;
+            align-items: center;
+        }
+
+        .article-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Crisis Alert */
+        .crisis-alert {
+            background-color: #FFF3E0;
+            border: 2px solid #FFB74D;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .crisis-alert.low {
+            background-color: #E8F5E9;
+            border-color: #66BB6A;
+        }
+
+        .crisis-alert.medium {
+            background-color: #FFF3E0;
+            border-color: #FFB74D;
+        }
+
+        .crisis-alert.high {
+            background-color: #FFEBEE;
+            border-color: #EF5350;
+        }
+
+        .crisis-icon {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+        }
+
+        .crisis-content h4 {
+            color: #4B0082;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .crisis-content p {
+            color: #6A5ACD;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Summary Section */
+        .summary-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .length-selector {
+            padding: 8px 16px;
+            border: 2px solid #E6E6FA;
+            border-radius: 10px;
+            background-color: #FAFAFA;
+            color: #4B0082;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .length-selector:focus {
+            outline: none;
+            border-color: #9370DB;
+        }
+
+        .summary-text {
+            color: #4B0082;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #F0E6FA;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            color: #4B0082;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #9370DB;
+            font-size: 13px;
+        }
+
+        /* Key Insights */
+        .insight-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #FAFAFA;
+            border-radius: 12px;
+        }
+
+        .insight-number {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            background-color: #9370DB;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .insight-content h4 {
+            color: #4B0082;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .insight-content p {
+            color: #6A5ACD;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Sentiment Analysis */
+        .sentiment-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .sentiment-label {
+            min-width: 80px;
+            color: #6A5ACD;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 10px;
+            background-color: #F0E6FA;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .bar-fill.positive {
+            background-color: #66BB6A;
+        }
+
+        .bar-fill.neutral {
+            background-color: #9370DB;
+        }
+
+        .bar-fill.negative {
+            background-color: #EF5350;
+        }
+
+        .sentiment-value {
+            min-width: 50px;
+            text-align: right;
+            color: #4B0082;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* Grid Layout */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        /* Keywords */
+        .keyword-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #F0E6FA;
+        }
+
+        .keyword-item:last-child {
+            border-bottom: none;
+        }
+
+        .keyword-text {
+            color: #4B0082;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .keyword-count {
+            background-color: #E6E6FA;
+            color: #9370DB;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* Named Entities */
+        .entity-tag {
+            display: inline-block;
+            background-color: #E6E6FA;
+            color: #4B0082;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin: 3px;
+        }
+
+        .entity-category {
+            color: #9370DB;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            margin-top: 15px;
+        }
+
+        .entity-category:first-child {
+            margin-top: 0;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #9370DB;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #8064C8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(147, 112, 219, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: #F5F0FA;
+            color: #9370DB;
+        }
+
+        .btn-secondary:hover {
+            background-color: #E6E6FA;
+            color: #4B0082;
+        }
+
+        /* Error State */
+        .error-container {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            color: #EF5350;
+        }
+
+        .error-title {
+            color: #4B0082;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            color: #6A5ACD;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .article-title {
+                font-size: 24px;
+            }
+
+            .summary-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-controls {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .summary-controls > div {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <nav class="navbar">
+        <h1>
+            <div class="logo-icon">
+                <svg width="20" height="20" fill="none" stroke="white" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM8 7h8M8 11h8M8 15h5"/>
+                </svg>
+            </div>
+            Newslytics
+        </h1>
+        <a href="/dashboard" class="back-btn">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Dashboard
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Loading State -->
+        <div id="loadingState" class="card">
+            <div class="loading-container">
+                <div class="spinner-large"></div>
+                <div class="loading-text">Analyzing article...</div>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorState" class="card" style="display: none;">
+            <div class="error-container">
+                <svg class="error-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <h3 class="error-title">Analysis Not Found</h3>
+                <p class="error-message">We couldn't find the analysis you're looking for.</p>
+                <a href="/dashboard" class="btn btn-primary">Return to Dashboard</a>
+            </div>
+        </div>
+
+        <!-- Analysis Content -->
+        <div id="analysisContent" style="display: none;">
+            <!-- Article Header Card -->
+            <div class="card">
+                <div class="article-header">
+                    <h1 class="article-title" id="articleTitle"></h1>
+                    <div class="article-meta" id="articleMeta"></div>
+                </div>
+
+                <!-- Crisis Alert -->
+                <div id="crisisAlert"></div>
+            </div>
+
+            <!-- Main Grid -->
+            <div class="analysis-grid">
+                <!-- Left Column -->
+                <div>
+                    <!-- Summary Card -->
+                    <div class="card">
+                        <div class="summary-controls">
+                            <h2>Article Summary</h2>
+                            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                <button class="btn btn-secondary" id="readAloudBtn" onclick="toggleReadAloud()" style="padding: 8px 16px; margin: 0;">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+                                    </svg>
+                                    <span id="readAloudText">Read Aloud</span>
+                                </button>
+                                <select class="length-selector" id="languageSelector" onchange="translateSummary()">
+                                    <option value="en">English</option>
+                                    <option value="ta">Tamil</option>
+                                    <option value="hi">Hindi</option>
+                                    <option value="es">Spanish</option>
+                                    <option value="fr">French</option>
+                                    <option value="de">German</option>
+                                    <option value="it">Italian</option>
+                                    <option value="pt">Portuguese</option>
+                                    <option value="zh">Chinese</option>
+                                    <option value="ja">Japanese</option>
+                                    <option value="ko">Korean</option>
+                                    <option value="ru">Russian</option>
+                                </select>
+                                <select class="length-selector" id="summaryLength" onchange="changeSummaryLength()">
+                                    <option value="short">Short</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="long">Long</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="summaryText" class="summary-text"></div>
+                        <div class="summary-stats" id="summaryStats"></div>
+                    </div>
+
+                    <!-- Key Insights Card -->
+                    <div class="card">
+                        <h2>Key Insights</h2>
+                        <div id="keyInsights"></div>
+                    </div>
+
+                    <!-- Sentiment Analysis Card -->
+                    <div class="card">
+                        <h2>Sentiment Analysis</h2>
+                        <div id="sentimentBars"></div>
+                    </div>
+                </div>
+
+                <!-- Right Column (Sidebar) -->
+                <div>
+                    <!-- Keywords Card -->
+                    <div class="card">
+                        <h3>Key Terms</h3>
+                        <div id="keywordsList"></div>
+                    </div>
+
+                    <!-- Named Entities Card (dynamically added) -->
+
+                    <!-- Export Options Card -->
+                    <div class="card">
+                        <h3>Export & Share</h3>
+                        <div class="action-buttons" style="flex-direction: column; margin-top: 15px;">
+                            <button class="btn btn-secondary" onclick="exportPDF()">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Export PDF
+                            </button>
+                            <button class="btn btn-secondary" onclick="exportText()">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Plain Text
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get summary ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const summaryId = urlParams.get('id') || window.location.pathname.split('/').pop();
+        
+        // Store the full summary data
+        let fullSummaryData = null;
+        
+        // Speech synthesis variables
+        let speechSynthesis = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+        
+        // Translation variables
+        let originalSummaryText = '';
+        let currentLanguage = 'en';
+        let isTranslating = false;
+
+        // Load analysis data
+        async function loadAnalysis() {
+            try {
+                const response = await fetch(`/api/summary/${summaryId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayAnalysis(data.summary);
+                } else {
+                    showError();
+                }
+            } catch (error) {
+                console.error('Error loading analysis:', error);
+                showError();
+            }
+        }
+
+        function displayAnalysis(summary) {
+            // Store for later use
+            fullSummaryData = summary;
+            
+            // Hide loading, show content
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('analysisContent').style.display = 'block';
+
+            // Article Title
+            document.getElementById('articleTitle').textContent = summary.title || 'Untitled Article';
+
+            // Article Meta
+            const metaHTML = `
+                <span>${escapeHtml(summary.source || 'Unknown Source')}</span>
+                <span>•</span>
+                <span>${formatDate(summary.created_at)}</span>
+            `;
+            document.getElementById('articleMeta').innerHTML = metaHTML;
+
+            // Crisis Alert
+            if (summary.crisis_level && summary.crisis_level.toLowerCase() !== 'none') {
+                const alertHTML = `
+                    <div class="crisis-alert ${summary.crisis_level.toLowerCase()}">
+                        <svg class="crisis-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                        </svg>
+                        <div class="crisis-content">
+                            <h4>${summary.crisis_level} Crisis Alert</h4>
+                            <p>${escapeHtml(summary.crisis_description || 'This article contains potentially significant information.')}</p>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('crisisAlert').innerHTML = alertHTML;
+            }
+
+            // Summary Text (default to medium)
+            displaySummaryText('medium');
+
+            // Key Insights
+            if (summary.key_points && summary.key_points.length > 0) {
+                const insightsHTML = summary.key_points.slice(0, 5).map((point, index) => `
+                    <div class="insight-item">
+                        <div class="insight-number">${index + 1}</div>
+                        <div class="insight-content">
+                            <p>${escapeHtml(point)}</p>
+                        </div>
+                    </div>
+                `).join('');
+                document.getElementById('keyInsights').innerHTML = insightsHTML;
+            }
+
+            // Sentiment Analysis
+            const sentiment = summary.sentiment || { positive: 50, neutral: 30, negative: 20 };
+            const sentimentHTML = `
+                <div class="sentiment-bar">
+                    <div class="sentiment-label">Positive</div>
+                    <div class="bar-track">
+                        <div class="bar-fill positive" style="width: ${sentiment.positive}%"></div>
+                    </div>
+                    <div class="sentiment-value">${sentiment.positive}%</div>
+                </div>
+                <div class="sentiment-bar">
+                    <div class="sentiment-label">Neutral</div>
+                    <div class="bar-track">
+                        <div class="bar-fill neutral" style="width: ${sentiment.neutral}%"></div>
+                    </div>
+                    <div class="sentiment-value">${sentiment.neutral}%</div>
+                </div>
+                <div class="sentiment-bar">
+                    <div class="sentiment-label">Negative</div>
+                    <div class="bar-track">
+                        <div class="bar-fill negative" style="width: ${sentiment.negative}%"></div>
+                    </div>
+                    <div class="sentiment-value">${sentiment.negative}%</div>
+                </div>
+            `;
+            document.getElementById('sentimentBars').innerHTML = sentimentHTML;
+
+            // Keywords
+            if (summary.keywords && summary.keywords.length > 0) {
+                const keywordsHTML = summary.keywords.slice(0, 8).map(kw => `
+                    <div class="keyword-item">
+                        <div class="keyword-text">${escapeHtml(kw.word || kw)}</div>
+                        <div class="keyword-count">${kw.count || 1}</div>
+                    </div>
+                `).join('');
+                document.getElementById('keywordsList').innerHTML = keywordsHTML;
+            }
+
+            // Named Entities
+            if (summary.named_entities) {
+                displayNamedEntities(summary.named_entities);
+            }
+        }
+
+        function changeSummaryLength() {
+            const length = document.getElementById('summaryLength').value;
+            
+            // Stop speaking if currently reading
+            if (isSpeaking) {
+                stopReadAloud();
+            }
+            
+            displaySummaryText(length);
+        }
+
+        function displaySummaryText(length) {
+            if (!fullSummaryData) return;
+            
+            let summaryText = '';
+            if (length === 'short') {
+                summaryText = fullSummaryData.summary_short || fullSummaryData.summary;
+            } else if (length === 'long') {
+                summaryText = fullSummaryData.summary_long || fullSummaryData.summary;
+            } else {
+                summaryText = fullSummaryData.summary_medium || fullSummaryData.summary;
+            }
+            
+            // Store original text
+            originalSummaryText = summaryText;
+            
+            // If a language other than English is selected, translate
+            const selectedLanguage = document.getElementById('languageSelector').value;
+            if (selectedLanguage !== 'en') {
+                translateText(summaryText, selectedLanguage);
+            } else {
+                document.getElementById('summaryText').innerHTML = `<p class="summary-text">${escapeHtml(summaryText)}</p>`;
+                updateSummaryStats(fullSummaryData, summaryText);
+            }
+        }
+
+        function updateSummaryStats(summary, currentSummary) {
+            const statsHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${summary.key_points?.length || 0}</div>
+                    <div class="stat-label">Key Points</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${calculateCompression(summary, currentSummary)}%</div>
+                    <div class="stat-label">Compression</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${calculateReadTime(currentSummary)}</div>
+                    <div class="stat-label">Read Time</div>
+                </div>
+            `;
+            document.getElementById('summaryStats').innerHTML = statsHTML;
+        }
+
+        function displayNamedEntities(entities) {
+            // Add a new card for named entities after keywords if they exist
+            const keywordsCard = document.querySelector('#keywordsList').closest('.card');
+            
+            // Check if we already have an entities card
+            let entitiesCard = document.getElementById('entitiesCard');
+            
+            if (!entitiesCard && (entities.People?.length || entities.Organizations?.length || entities.Locations?.length)) {
+                entitiesCard = document.createElement('div');
+                entitiesCard.className = 'card';
+                entitiesCard.id = 'entitiesCard';
+                entitiesCard.innerHTML = '<h3>Named Entities</h3><div id="entitiesList"></div>';
+                keywordsCard.parentNode.insertBefore(entitiesCard, keywordsCard.nextSibling);
+            }
+            
+            if (entitiesCard) {
+                let entitiesHTML = '';
+                
+                if (entities.People && entities.People.length > 0) {
+                    entitiesHTML += `<div class="entity-category">People</div>`;
+                    entities.People.forEach(person => {
+                        entitiesHTML += `<span class="entity-tag">${escapeHtml(person)}</span>`;
+                    });
+                }
+                
+                if (entities.Organizations && entities.Organizations.length > 0) {
+                    entitiesHTML += `<div class="entity-category">Organizations</div>`;
+                    entities.Organizations.forEach(org => {
+                        entitiesHTML += `<span class="entity-tag">${escapeHtml(org)}</span>`;
+                    });
+                }
+                
+                if (entities.Locations && entities.Locations.length > 0) {
+                    entitiesHTML += `<div class="entity-category">Locations</div>`;
+                    entities.Locations.forEach(loc => {
+                        entitiesHTML += `<span class="entity-tag">${escapeHtml(loc)}</span>`;
+                    });
+                }
+                
+                document.getElementById('entitiesList').innerHTML = entitiesHTML;
+            }
+        }
+
+        function showError() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+        }
+
+        // Helper Functions
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 60) return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+            if (hours < 24) return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+            if (days < 7) return `${days} day${days !== 1 ? 's' : ''} ago`;
+            return date.toLocaleDateString();
+        }
+
+        function calculateCompression(summary, currentSummary) {
+            if (!summary.full_content) return 85;
+            const originalLength = summary.full_content.length;
+            const summaryLength = currentSummary.length;
+            return Math.round((1 - summaryLength / originalLength) * 100);
+        }
+
+        function calculateReadTime(text) {
+            const words = text.split(' ').length;
+            const minutes = Math.ceil(words / 200);
+            return `${minutes}min`;
+        }
+
+        function exportPDF() {
+            window.location.href = `/export-summary/${summaryId}?format=pdf`;
+        }
+
+        function exportText() {
+            window.location.href = `/export-summary/${summaryId}`;
+        }
+        
+        // Read Aloud Functionality
+        function toggleReadAloud() {
+            if (isSpeaking) {
+                stopReadAloud();
+            } else {
+                startReadAloud();
+            }
+        }
+        
+        function startReadAloud() {
+            // Check if speech synthesis is supported
+            if (!('speechSynthesis' in window)) {
+                alert('Sorry, your browser does not support text-to-speech.');
+                return;
+            }
+            
+            // Get the current summary text
+            const summaryElement = document.getElementById('summaryText');
+            const textToRead = summaryElement.textContent;
+            
+            if (!textToRead) {
+                alert('No summary text available to read.');
+                return;
+            }
+            
+            // Stop any ongoing speech
+            speechSynthesis.cancel();
+            
+            // Create new utterance
+            currentUtterance = new SpeechSynthesisUtterance(textToRead);
+            
+            // Configure speech settings
+            currentUtterance.rate = 1.0;  // Normal speed
+            currentUtterance.pitch = 1.0;  // Normal pitch
+            currentUtterance.volume = 1.0;  // Full volume
+            
+            // Set language based on current selection
+            const selectedLanguage = document.getElementById('languageSelector').value;
+            
+            // Language code mapping for speech synthesis
+            const speechLanguageMap = {
+                'en': 'en-US',
+                'hi': 'hi-IN',
+                'bn': 'bn-IN',
+                'te': 'te-IN',
+                'mr': 'mr-IN',
+                'ta': 'ta-IN',
+                'ur': 'ur-PK',
+                'gu': 'gu-IN',
+                'kn': 'kn-IN',
+                'ml': 'ml-IN',
+                'pa': 'pa-IN',
+                'es': 'es-ES',
+                'fr': 'fr-FR',
+                'de': 'de-DE',
+                'it': 'it-IT',
+                'pt': 'pt-PT',
+                'ru': 'ru-RU',
+                'zh': 'zh-CN',
+                'ja': 'ja-JP',
+                'ko': 'ko-KR',
+                'ar': 'ar-SA'
+            };
+            
+            // Set the language for the utterance
+            currentUtterance.lang = speechLanguageMap[selectedLanguage] || 'en-US';
+            
+            console.log(`Reading in language: ${currentUtterance.lang}`);
+            
+            // Set up event listeners
+            currentUtterance.onstart = function() {
+                isSpeaking = true;
+                updateReadAloudButton(true);
+            };
+            
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                updateReadAloudButton(false);
+            };
+            
+            currentUtterance.onerror = function(event) {
+                console.error('Speech synthesis error:', event);
+                isSpeaking = false;
+                updateReadAloudButton(false);
+                
+                // Show error if voice not available
+                if (event.error === 'language-unavailable') {
+                    alert('Voice for this language is not available on your device. The text will be read in English.');
+                }
+            };
+            
+            // Start speaking
+            speechSynthesis.speak(currentUtterance);
+        }
+        
+        function stopReadAloud() {
+            speechSynthesis.cancel();
+            isSpeaking = false;
+            updateReadAloudButton(false);
+        }
+        
+        function updateReadAloudButton(speaking) {
+            const btn = document.getElementById('readAloudBtn');
+            const btnText = document.getElementById('readAloudText');
+            
+            if (speaking) {
+                btn.style.backgroundColor = '#9370DB';
+                btn.style.color = 'white';
+                btnText.textContent = 'Stop Reading';
+                btn.querySelector('svg').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/>';
+            } else {
+                btn.style.backgroundColor = '#F5F0FA';
+                btn.style.color = '#9370DB';
+                btnText.textContent = 'Read Aloud';
+                btn.querySelector('svg').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>';
+            }
+        }
+        
+        // Translation Functionality
+        async function translateSummary() {
+            const targetLanguage = document.getElementById('languageSelector').value;
+            currentLanguage = targetLanguage;
+            
+            // Stop speaking if currently reading
+            if (isSpeaking) {
+                stopReadAloud();
+            }
+            
+            if (targetLanguage === 'en') {
+                // Show original text
+                document.getElementById('summaryText').innerHTML = `<p class="summary-text">${escapeHtml(originalSummaryText)}</p>`;
+                updateSummaryStats(fullSummaryData, originalSummaryText);
+            } else {
+                // Translate to selected language
+                await translateText(originalSummaryText, targetLanguage);
+            }
+        }
+        
+        async function translateText(text, targetLang) {
+            if (isTranslating) return;
+            
+            isTranslating = true;
+            const summaryElement = document.getElementById('summaryText');
+            
+            // Show loading state
+            summaryElement.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px; color: #9370DB;">
+                    <div style="width: 20px; height: 20px; border: 2px solid #E6E6FA; border-top-color: #9370DB; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+                    <span>Translating...</span>
+                </div>
+            `;
+            
+            try {
+                // Call backend translation API
+                const response = await fetch('/api/translate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        target_language: targetLang
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.translated_text) {
+                    const translatedText = data.translated_text;
+                    summaryElement.innerHTML = `<p class="summary-text">${escapeHtml(translatedText)}</p>`;
+                    updateSummaryStats(fullSummaryData, translatedText);
+                } else {
+                    throw new Error(data.message || 'Translation failed');
+                }
+            } catch (error) {
+                console.error('Translation error:', error);
+                let errorMessage = 'Unable to translate at this time. Please try again later.';
+                
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage = 'Cannot connect to translation service. Please check your internet connection.';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                summaryElement.innerHTML = `
+                    <div style="padding: 20px; background-color: #FFEBEE; border-radius: 10px; color: #C62828; margin-bottom: 15px;">
+                        <p style="margin-bottom: 10px; font-weight: 600;">Translation Error</p>
+                        <p style="font-size: 14px;">${escapeHtml(errorMessage)}</p>
+                        <p style="font-size: 12px; margin-top: 8px; color: #999;">Check the browser console (F12) for more details.</p>
+                    </div>
+                    <p class="summary-text">${escapeHtml(text)}</p>
+                `;
+                updateSummaryStats(fullSummaryData, text);
+                
+                // Reset language selector to English
+                document.getElementById('languageSelector').value = 'en';
+                currentLanguage = 'en';
+            } finally {
+                isTranslating = false;
+            }
+        }
+
+        // Load analysis on page load
+        document.addEventListener('DOMContentLoaded', loadAnalysis);
+    </script>
+</body>
+</html>

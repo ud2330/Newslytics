@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Newslytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #F0E6FA;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: #FFFFFF;
+            padding: 20px 40px;
+            box-shadow: 0 2px 15px rgba(75, 0, 130, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar h1 {
+            color: #4B0082;
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background-color: #9370DB;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-name {
+            color: #6A5ACD;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .logout-btn {
+            padding: 10px 24px;
+            background-color: #9370DB;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            background-color: #8064C8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(147, 112, 219, 0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .welcome-card {
+            background-color: #FFFFFF;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(75, 0, 130, 0.1);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-card h2 {
+            color: #4B0082;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .welcome-card p {
+            color: #6A5ACD;
+            font-size: 16px;
+        }
+
+        .card {
+            background-color: #FFFFFF;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(75, 0, 130, 0.08);
+            animation: fadeInUp 0.6s ease-out backwards;
+            margin-bottom: 30px;
+        }
+
+        .card h3 {
+            color: #4B0082;
+            font-size: 22px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4B0082;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+        }
+
+        .input-wrapper input,
+        .input-wrapper textarea {
+            flex: 1;
+            padding: 14px 16px;
+            border: 2px solid #E6E6FA;
+            border-radius: 12px;
+            font-size: 15px;
+            background-color: #FAFAFA;
+            transition: all 0.3s ease;
+            color: #4B0082;
+            font-family: inherit;
+        }
+
+        .input-wrapper textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .input-wrapper input:focus,
+        .input-wrapper textarea:focus {
+            outline: none;
+            border-color: #9370DB;
+            background-color: #FFFFFF;
+            box-shadow: 0 0 0 4px rgba(147, 112, 219, 0.1);
+        }
+
+        .url-input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 14px 16px;
+            border: 2px solid #E6E6FA;
+            border-radius: 12px;
+            font-size: 15px;
+            background-color: #FAFAFA;
+            transition: all 0.3s ease;
+            color: #4B0082;
+            font-family: inherit;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: #9370DB;
+            background-color: #FFFFFF;
+            box-shadow: 0 0 0 4px rgba(147, 112, 219, 0.1);
+        }
+
+        .remove-url-btn {
+            background-color: #FFE6E6;
+            color: #C62828;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-url-btn:hover {
+            background-color: #FFB3B3;
+        }
+
+        .add-url-btn {
+            padding: 12px 20px;
+            background-color: #F5F0FA;
+            color: #9370DB;
+            border: 2px dashed #E6E6FA;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .add-url-btn:hover {
+            background-color: #E6E6FA;
+            border-color: #9370DB;
+        }
+
+        .add-url-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .analyze-btn {
+            padding: 14px 28px;
+            background-color: #9370DB;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .analyze-btn:hover {
+            background-color: #8064C8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(147, 112, 219, 0.3);
+        }
+
+        .analyze-btn:disabled {
+            background-color: #B8A4D8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #E6E6FA;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            background-color: #FAFAFA;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .file-upload-area:hover {
+            border-color: #9370DB;
+            background-color: #F5F0FA;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #9370DB;
+            background-color: #F0E6FA;
+        }
+
+        .file-upload-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            color: #9370DB;
+        }
+
+        .file-upload-text {
+            color: #4B0082;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .file-upload-hint {
+            color: #9370DB;
+            font-size: 13px;
+        }
+
+        .file-list {
+            margin-top: 15px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background-color: #F5F0FA;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .file-item-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-item-icon {
+            width: 20px;
+            height: 20px;
+            color: #9370DB;
+        }
+
+        .file-item-name {
+            color: #4B0082;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .file-item-remove {
+            background: none;
+            border: none;
+            color: #C62828;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .compare-btn {
+            width: 100%;
+            padding: 14px 28px;
+            background-color: #6A5ACD;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .compare-btn:hover {
+            background-color: #5A4CB8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(106, 90, 205, 0.3);
+        }
+
+        .compare-btn:disabled {
+            background-color: #B8A4D8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #B8A4D8;
+            font-size: 13px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: #E6E6FA;
+        }
+
+        .divider span {
+            padding: 0 15px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .history-count {
+            color: #9370DB;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9370DB;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h4 {
+            color: #6A5ACD;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: #B8A4D8;
+            font-size: 14px;
+        }
+
+        .history-item {
+            padding: 20px;
+            border: 2px solid #E6E6FA;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.4s ease-out backwards;
+        }
+
+        .history-item:nth-child(1) { animation-delay: 0.1s; }
+        .history-item:nth-child(2) { animation-delay: 0.2s; }
+        .history-item:nth-child(3) { animation-delay: 0.3s; }
+
+        .history-item:hover {
+            border-color: #9370DB;
+            box-shadow: 0 5px 15px rgba(147, 112, 219, 0.15);
+        }
+
+        .history-title {
+            color: #4B0082;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .history-summary {
+            color: #6A5ACD;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .history-meta {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            color: #9370DB;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            background-color: #F5F0FA;
+            color: #9370DB;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background-color: #E6E6FA;
+            color: #4B0082;
+        }
+
+        .delete-btn {
+            background-color: #FFE6E6;
+            color: #C62828;
+        }
+
+        .delete-btn:hover {
+            background-color: #FFB3B3;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #E6E6FA;
+            border-top-color: #9370DB;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.success {
+            background-color: #E6F4EA;
+            color: #1B5E20;
+        }
+
+        .message.error {
+            background-color: #FFE6E6;
+            color: #C62828;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .input-wrapper {
+                flex-direction: column;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .welcome-card {
+                padding: 25px;
+            }
+
+            .welcome-card h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>
+            <div class="logo-icon">
+                <svg width="20" height="20" fill="none" stroke="white" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM8 7h8M8 11h8M8 15h5"/>
+                </svg>
+
+            </div>
+            Newslytics
+        </h1>
+        <div class="user-info">
+            <span class="user-name">{{ user_email }}</span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-card">
+            <h2 id="welcomeMessage">Welcome back! {{ user_name }}</h2>
+            <p>Just share an article, and we’ll summarize the story for you.</p>
+        </div>
+
+        <div class="card">
+            <h3>Analyze New Article</h3>
+            <div id="message" class="message"></div>
+            
+            <div class="input-group">
+                <label for="articleUrl">Article URL</label>
+                <div class="input-wrapper">
+                    <input type="url" id="articleUrl" placeholder="https://example.com/news-article">
+                    <button class="analyze-btn" id="analyzeUrlBtn" onclick="analyzeUrl()">
+                        <span id="urlBtnText">Analyze URL</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <div class="input-group">
+                <label for="articleText">Paste Article Text</label>
+                <div class="input-wrapper">
+                    <textarea id="articleText" placeholder="Paste your article content here..."></textarea>
+                </div>
+                <button class="analyze-btn" id="analyzeTextBtn" onclick="analyzeText()" style="margin-top: 10px; width: 100%;">
+                    <span id="textBtnText">Analyze Text</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Compare Multiple Articles</h3>
+            <p style="color: #6A5ACD; font-size: 14px; margin-bottom: 20px;">Compare 2-5 articles by entering URLs or uploading files</p>
+            
+            <div class="input-group">
+                <label>Article URLs</label>
+                <div id="urlInputsContainer">
+                    <div class="url-input-row">
+                        <input type="url" class="url-input" placeholder="https://example.com/article1">
+                        <button type="button" class="remove-url-btn" onclick="removeUrlInput(0)" style="display: none;">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="add-url-btn" onclick="addUrlInput()">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-right: 6px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Add Another URL
+                </button>
+                <p style="color: #9370DB; font-size: 12px; margin-top: 8px;">Add 2-5 article URLs to compare</p>
+            </div>
+
+            <div class="divider">
+                <span>OR UPLOAD FILES</span>
+            </div>
+            
+            <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('fileInput').click()">
+                <svg class="file-upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                </svg>
+                <div class="file-upload-text">Click to upload or drag and drop</div>
+                <div class="file-upload-hint">PDF, DOCX, TXT, JPG, PNG (Max 5 files, 16MB each)</div>
+            </div>
+            
+            <input type="file" id="fileInput" multiple accept=".pdf,.docx,.doc,.txt,.jpg,.jpeg,.png" style="display: none;" onchange="handleFiles(this.files)">
+            
+            <div class="file-list" id="fileList"></div>
+            
+            <button class="compare-btn" id="compareBtn" onclick="compareArticles()" disabled>
+                <span id="compareBtnText">Compare Articles</span>
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="history-header">
+                <h3>Analysis History</h3>
+                <span class="history-count" id="historyCount">0 summaries</span>
+            </div>
+            
+            <div id="historyContainer">
+                <div class="empty-state">
+                    <svg fill="none" stroke="#9370DB" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <h4>No analyses yet</h4>
+                    <p>Start by analyzing your first article above</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFiles = [];
+        let historyData = [];
+        let urlInputCount = 1;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHistory();
+            setupDragAndDrop();
+            setupUrlInputListeners();
+        });
+
+        function setupUrlInputListeners() {
+            const urlInputs = document.querySelectorAll('.url-input');
+            urlInputs.forEach(input => {
+                input.addEventListener('input', updateCompareButton);
+            });
+        }
+
+        function addUrlInput() {
+            if (urlInputCount >= 5) {
+                showMessage('Maximum 5 URLs allowed', 'error');
+                return;
+            }
+
+            urlInputCount++;
+            const container = document.getElementById('urlInputsContainer');
+            const newRow = document.createElement('div');
+            newRow.className = 'url-input-row';
+            newRow.innerHTML = `
+                <input type="url" class="url-input" placeholder="https://example.com/article${urlInputCount}">
+                <button type="button" class="remove-url-btn" onclick="removeUrlInput(${urlInputCount - 1})">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            `;
+            container.appendChild(newRow);
+
+            // Add event listener to new input
+            const newInput = newRow.querySelector('.url-input');
+            newInput.addEventListener('input', updateCompareButton);
+
+            // Update add button state
+            updateAddButtonState();
+            updateCompareButton();
+            updateRemoveButtons();
+        }
+
+        function removeUrlInput(index) {
+            const container = document.getElementById('urlInputsContainer');
+            const rows = container.querySelectorAll('.url-input-row');
+            
+            if (rows.length > 1) {
+                rows[index].remove();
+                urlInputCount--;
+                updateAddButtonState();
+                updateCompareButton();
+                updateRemoveButtons();
+            }
+        }
+
+        function updateRemoveButtons() {
+            const container = document.getElementById('urlInputsContainer');
+            const rows = container.querySelectorAll('.url-input-row');
+            
+            rows.forEach((row, index) => {
+                const removeBtn = row.querySelector('.remove-url-btn');
+                if (removeBtn) {
+                    removeBtn.style.display = rows.length > 1 ? 'flex' : 'none';
+                    // Update onclick with correct index
+                    removeBtn.setAttribute('onclick', `removeUrlInput(${index})`);
+                }
+            });
+        }
+
+        function updateAddButtonState() {
+            const addBtn = document.querySelector('.add-url-btn');
+            if (addBtn) {
+                addBtn.disabled = urlInputCount >= 5;
+            }
+        }
+
+        function getUrlInputValues() {
+            const inputs = document.querySelectorAll('.url-input');
+            const urls = [];
+            inputs.forEach(input => {
+                const url = input.value.trim();
+                if (url) {
+                    urls.push(url);
+                }
+            });
+            return urls;
+        }
+
+        function setupDragAndDrop() {
+            const dropArea = document.getElementById('fileUploadArea');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => dropArea.classList.add('dragover'), false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => dropArea.classList.remove('dragover'), false);
+            });
+            
+            dropArea.addEventListener('drop', function(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }, false);
+        }
+
+        function handleFiles(files) {
+            const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword', 'text/plain', 'image/jpeg', 'image/jpg', 'image/png'];
+            const maxSize = 16 * 1024 * 1024;
+            
+            for (let file of files) {
+                if (selectedFiles.length >= 5) {
+                    showMessage('Maximum 5 files allowed', 'error');
+                    break;
+                }
+                
+                if (!allowedTypes.includes(file.type) && !file.name.match(/\.(pdf|docx|doc|txt|jpg|jpeg|png)$/i)) {
+                    showMessage(`File type not supported: ${file.name}`, 'error');
+                    continue;
+                }
+                
+                if (file.size > maxSize) {
+                    showMessage(`File too large: ${file.name} (max 16MB)`, 'error');
+                    continue;
+                }
+                
+                selectedFiles.push(file);
+            }
+            
+            displayFileList();
+            updateCompareButton();
+        }
+
+        function displayFileList() {
+            const fileList = document.getElementById('fileList');
+            
+            if (selectedFiles.length === 0) {
+                fileList.innerHTML = '';
+                return;
+            }
+            
+            fileList.innerHTML = selectedFiles.map((file, index) => `
+                <div class="file-item">
+                    <div class="file-item-info">
+                        <svg class="file-item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span class="file-item-name">${escapeHtml(file.name)}</span>
+                    </div>
+                    <button class="file-item-remove" onclick="removeFile(${index})">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            displayFileList();
+            updateCompareButton();
+        }
+
+        function updateCompareButton() {
+            const compareBtn = document.getElementById('compareBtn');
+            const urls = getUrlInputValues();
+            
+            const totalItems = selectedFiles.length + urls.length;
+            compareBtn.disabled = totalItems < 2 || totalItems > 5;
+        }
+
+        async function compareArticles() {
+            const urls = getUrlInputValues();
+            
+            const totalItems = selectedFiles.length + urls.length;
+            
+            if (totalItems < 2) {
+                showMessage('Please provide at least 2 articles (URLs or files)', 'error');
+                return;
+            }
+            
+            if (totalItems > 5) {
+                showMessage('Maximum 5 articles allowed', 'error');
+                return;
+            }
+            
+            const btn = document.getElementById('compareBtn');
+            const btnText = document.getElementById('compareBtnText');
+            
+            btn.disabled = true;
+            btnText.innerHTML = '<span class="spinner"></span> Comparing...';
+            
+            try {
+                const formData = new FormData();
+                
+                selectedFiles.forEach(file => {
+                    formData.append('files', file);
+                });
+                
+                urls.forEach(url => {
+                    formData.append('urls', url);
+                });
+                
+                const response = await fetch('/compare-articles', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('Articles compared successfully! Redirecting...', 'success');
+                    selectedFiles = [];
+                    
+                    // Clear all URL inputs except the first one
+                    const container = document.getElementById('urlInputsContainer');
+                    container.innerHTML = `
+                        <div class="url-input-row">
+                            <input type="url" class="url-input" placeholder="https://example.com/article1">
+                            <button type="button" class="remove-url-btn" onclick="removeUrlInput(0)" style="display: none;">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    urlInputCount = 1;
+                    setupUrlInputListeners();
+                    
+                    displayFileList();
+                    updateAddButtonState();
+                    
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1000);
+                } else {
+                    showMessage(data.message || 'Comparison failed', 'error');
+                    btn.disabled = false;
+                    btnText.textContent = 'Compare Articles';
+                }
+            } catch (error) {
+                console.error('Comparison error:', error);
+                showMessage('An error occurred. Please try again.', 'error');
+                btn.disabled = false;
+                btnText.textContent = 'Compare Articles';
+            }
+        }
+
+        async function analyzeUrl() {
+            const urlInput = document.getElementById('articleUrl');
+            const url = urlInput.value.trim();
+            const btn = document.getElementById('analyzeUrlBtn');
+            const btnText = document.getElementById('urlBtnText');
+
+            if (!url) {
+                showMessage('Please enter a valid URL', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btnText.innerHTML = '<span class="spinner"></span> Analyzing...';
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url, type: 'url' })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('Article analyzed successfully! Redirecting...', 'success');
+                    urlInput.value = '';
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 500);
+                } else {
+                    showMessage(data.message || 'Analysis failed', 'error');
+                    btn.disabled = false;
+                    btnText.textContent = 'Analyze URL';
+                }
+            } catch (error) {
+                console.error('Analysis error:', error);
+                showMessage('An error occurred. Please try again.', 'error');
+                btn.disabled = false;
+                btnText.textContent = 'Analyze URL';
+            }
+        }
+
+        async function analyzeText() {
+            const textInput = document.getElementById('articleText');
+            const text = textInput.value.trim();
+            const btn = document.getElementById('analyzeTextBtn');
+            const btnText = document.getElementById('textBtnText');
+
+            if (!text || text.length < 100) {
+                showMessage('Article text must be at least 100 characters', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btnText.innerHTML = '<span class="spinner"></span> Analyzing...';
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text, type: 'text' })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('Article analyzed successfully! Redirecting...', 'success');
+                    textInput.value = '';
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 500);
+                } else {
+                    showMessage(data.message || 'Analysis failed', 'error');
+                    btn.disabled = false;
+                    btnText.textContent = 'Analyze Text';
+                }
+            } catch (error) {
+                console.error('Analysis error:', error);
+                showMessage('An error occurred. Please try again.', 'error');
+                btn.disabled = false;
+                btnText.textContent = 'Analyze Text';
+            }
+        }
+
+        async function loadHistory() {
+            const container = document.getElementById('historyContainer');
+            const countElement = document.getElementById('historyCount');
+
+            try {
+                const response = await fetch('/history');
+                const data = await response.json();
+
+                if (data.success && data.history && data.history.length > 0) {
+                    historyData = data.history;
+                    countElement.textContent = `${data.history.length} ${data.history.length === 1 ? 'summary' : 'summaries'}`;
+                    
+                    container.innerHTML = data.history.map(item => `
+                        <div class="history-item">
+                            <div class="history-title">${escapeHtml(item.title || 'Untitled Article')}</div>
+                            <div class="history-summary">${escapeHtml(truncateText(item.summary, 150))}</div>
+                            <div class="history-meta">
+                                <span>${formatDate(item.created_at)}</span>
+                                ${item.source ? `<span>•</span><span>${escapeHtml(item.source)}</span>` : ''}
+                            </div>
+                            <div class="history-actions">
+                                <button class="action-btn" onclick="viewDetails('${item._id || item.id}')">View Details</button>
+                                <button class="action-btn delete-btn" onclick="deleteHistory('${item._id || item.id}')">Delete</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    countElement.textContent = '0 summaries';
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <svg fill="none" stroke="#9370DB" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <h4>No analyses yet</h4>
+                            <p>Start by analyzing your first article above</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+                countElement.textContent = '0 summaries';
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg fill="none" stroke="#9370DB" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        <h4>Error loading history</h4>
+                        <p>Please refresh the page to try again</p>
+                    </div>
+                `;
+            }
+        }
+
+        function viewDetails(id) {
+            window.location.href = `/summary/${id}`;
+        }
+
+        async function deleteHistory(id) {
+            if (!confirm('Are you sure you want to delete this analysis?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/delete-history/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('Analysis deleted successfully', 'success');
+                    loadHistory();
+                } else {
+                    showMessage(data.message || 'Failed to delete analysis', 'error');
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+                showMessage('An error occurred while deleting', 'error');
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'block';
+            
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 5000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function truncateText(text, maxLength) {
+            if (!text) return '';
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '...';
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Unknown date';
+            
+            try {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffTime = Math.abs(now - date);
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+                const diffMinutes = Math.floor(diffTime / (1000 * 60));
+
+                if (diffMinutes < 60) {
+                    return diffMinutes === 0 ? 'Just now' : `${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''} ago`;
+                } else if (diffHours < 24) {
+                    return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+                } else if (diffDays < 7) {
+                    return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+                } else {
+                    return date.toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                }
+            } catch (error) {
+                return dateString;
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/logout';
+            }
+        }
+    </script>
+
+</body>
+</html>
